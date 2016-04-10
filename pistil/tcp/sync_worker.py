@@ -45,7 +45,7 @@ class TcpSyncWorker(Worker):
                 # process.
                 continue
 
-            except socket.error, e:
+            except socket.error as e:
                 if e[0] not in (errno.EAGAIN, errno.ECONNABORTED):
                     raise
 
@@ -60,7 +60,7 @@ class TcpSyncWorker(Worker):
                         self.timeout / 2.0)
                 if ret[0]:
                     continue
-            except select.error, e:
+            except select.error as e:
                 if e[0] == errno.EINTR:
                     continue
                 if e[0] == errno.EBADF:
