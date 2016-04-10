@@ -286,7 +286,7 @@ class Arbiter(object):
         """
         try:
             os.write(self._PIPE[1], '.')
-        except IOError, e:
+        except IOError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
                 raise
         
@@ -311,10 +311,10 @@ class Arbiter(object):
                 return
             while os.read(self._PIPE[0], 1):
                 pass
-        except select.error, e:
+        except select.error as e:
             if e[0] not in [errno.EAGAIN, errno.EINTR]:
                 raise
-        except OSError, e:
+        except OSError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
                 raise
         except KeyboardInterrupt:
@@ -430,7 +430,7 @@ class Arbiter(object):
                 child.tmp.close()
                 if child.child_type in RESTART_WORKERS and not self.stopping:
                     self._WORKERS["<killed %s>"  % id(child)] = (child, 0)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ECHILD:
                 pass
     
@@ -535,7 +535,7 @@ class Arbiter(object):
 
         try:
             os.kill(pid, sig)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ESRCH:
                 try:
                     (child, info) = self._WORKERS.pop(pid)
