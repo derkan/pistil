@@ -138,7 +138,7 @@ class PoolArbiter(Arbiter):
 
                 child, state = child_info
                 child.tmp.close()
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ECHILD:
                 pass
 
@@ -179,7 +179,7 @@ class PoolArbiter(Arbiter):
 
         try:
             os.kill(pid, sig)
-        except OSError, e:
+        except OSError as e:
             if e.errno == errno.ESRCH:
                 try:
                     (child, info) = self._WORKERS.pop(pid)
