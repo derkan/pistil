@@ -46,7 +46,7 @@ class BaseSocket(object):
     def close(self):
         try:
             self.sock.close()
-        except socket.error, e:
+        except socket.error as e:
             log.info("Error while closing socket %s", str(e))
         time.sleep(0.3)
         del self.sock
@@ -120,7 +120,7 @@ def create_socket(conf):
         fd = int(os.environ.pop('PISTIL_FD'))
         try:
             return sock_type(conf, fd=fd)
-        except socket.error, e:
+        except socket.error as e:
             if e[0] == errno.ENOTCONN:
                 log.error("PISTIL_FD should refer to an open socket.")
             else:
@@ -133,7 +133,7 @@ def create_socket(conf):
     for i in range(5):
         try:
             return sock_type(conf)
-        except socket.error, e:
+        except socket.error as e:
             if e[0] == errno.EADDRINUSE:
                 log.error("Connection in use: %s", str(addr))
             if e[0] == errno.EADDRNOTAVAIL:
