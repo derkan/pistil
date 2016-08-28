@@ -226,7 +226,7 @@ class Arbiter(object):
                 self.halt()
             except KeyboardInterrupt:
                 self.halt()
-            except HaltServer, inst:
+            except HaltServer as inst:
                 self.halt(reason=inst.reason, exit_status=inst.exit_status)
             except SystemExit:
                 raise
