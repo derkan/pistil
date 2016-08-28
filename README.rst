@@ -1,16 +1,12 @@
 pistil
 ------
 
+
 Simple multiprocessing toolkit. This is based on the `Gunicorn <http://gunicorn.org>`_ multiprocessing engine. 
 
 This library allows you to supervise multiple type of workers and chain
 supervisors. Gracefull, reload, signaling between workers is handled.  
 
-**Instalaltion for python3 direcly from this repo**
-
-    sudo pip3.5 install git+git://github.com/derkan/pistil.git --upgrade
-
-**Usage**
 
 Simple Arbiter launching one worker::
 
