@@ -65,9 +65,13 @@ class TcpSyncWorker(Worker):
                 if ret[0]:
                     continue
             except select.error as e:
-                if e[0] == errno.EINTR:
+                if hasattr(e, 'errno'):
+                    v_err = e.errno
+                else:
+                    v_err = e[0]                
+                if v_err == errno.EINTR:
                     continue
-                if e[0] == errno.EBADF:
+                if v_err == errno.EBADF:
                     if self.nr < 0:
                         continue
                     else:
