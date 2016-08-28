@@ -12,7 +12,7 @@ from pistil.worker import Worker
 class MyWorker(Worker):
 
     def handle(self):
-        print "hello from worker n°%s" % self.pid
+        print("hello from worker n°%s" % self.pid)
 
 
 if __name__ == "__main__":

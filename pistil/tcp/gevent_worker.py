@@ -3,12 +3,11 @@
 # This file is part of pistil released under the MIT license. 
 # See the NOTICE for more information.
 
-from __future__ import with_statement
+
 
 import os
 import sys
-import logging
-log = logging.getLogger(__name__)
+
 
 try:
     import gevent
@@ -59,7 +58,7 @@ class TcpGeventWorker(TcpSyncWorker):
             while self.alive:
                 self.notify()
                 if self.ppid != os.getppid():
-                    log.info("Parent changed, shutting down: %s", self)
+                    self.log.info("Parent changed, shutting down: %s", self)
                     break
         
                 gevent.sleep(1.0)

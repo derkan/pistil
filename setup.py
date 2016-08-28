@@ -10,17 +10,18 @@ import sys
 
 from pistil import __version__
 
+with open(os.path.join(
+            os.path.dirname(__file__),
+            'README.rst'
+        ), encoding='utf-8') as f:
+    long_description = f.read()
+
 setup(
     name = 'pistil',
     version = __version__,
 
     description = 'Multiprocessing toolkit',
-    long_description = open(
-        os.path.join(
-            os.path.dirname(__file__),
-            'README.rst'
-        )
-    ).read(),
+    long_description = long_description,
     author = 'Benoit Chesneau',
     author_email = 'benoitc@e-engura.com',
     license = 'MIT',

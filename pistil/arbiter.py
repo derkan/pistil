@@ -3,7 +3,7 @@
 # This file is part of pistil released under the MIT license. 
 # See the NOTICE for more information.
 
-from __future__ import with_statement
+
 
 import errno
 import logging
@@ -82,10 +82,7 @@ class Arbiter(object):
 
     # I love dynamic languages
     _SIG_QUEUE = []
-    _SIGNALS = map(
-        lambda x: getattr(signal, "SIG%s" % x),
-        "HUP QUIT INT TERM USR1 WINCH".split()
-    )
+    _SIGNALS = [getattr(signal, "SIG%s" % x) for x in "HUP QUIT INT TERM USR1 WINCH".split()]
     _SIG_NAMES = dict(
         (getattr(signal, name), name[3:].lower()) for name in dir(signal)
         if name[:3] == "SIG" and name[3] != "_"
@@ -177,11 +174,11 @@ class Arbiter(object):
         are queued. Child signals only wake up the master.
         """
         if self._PIPE:
-            map(os.close, self._PIPE)
+            list(map(os.close, self._PIPE))
         self._PIPE = pair = os.pipe()
-        map(util.set_non_blocking, pair)
-        map(util.close_on_exec, pair)
-        map(lambda s: signal.signal(s, self.signal), self._SIGNALS)
+        list(map(util.set_non_blocking, pair))
+        list(map(util.close_on_exec, pair))
+        list(map(lambda s: signal.signal(s, self.signal), self._SIGNALS))
         signal.signal(signal.SIGCHLD, self.handle_chld)
 
     def signal(self, sig, frame):
@@ -226,7 +223,7 @@ class Arbiter(object):
                 self.halt()
             except KeyboardInterrupt:
                 self.halt()
-            except HaltServer, inst:
+            except HaltServer as inst:
                 self.halt(reason=inst.reason, exit_status=inst.exit_status)
             except SystemExit:
                 raise
@@ -285,7 +282,7 @@ class Arbiter(object):
         Wake up the arbiter by writing to the _PIPE
         """
         try:
-            os.write(self._PIPE[1], '.')
+            os.write(self._PIPE[1], b'.')
         except IOError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
                 raise
@@ -312,7 +309,11 @@ class Arbiter(object):
             while os.read(self._PIPE[0], 1):
                 pass
         except select.error as e:
-            if e[0] not in [errno.EAGAIN, errno.EINTR]:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]
+            if v_err not in [errno.EAGAIN, errno.EINTR]:
                 raise
         except OSError as e:
             if e.errno not in [errno.EAGAIN, errno.EINTR]:
@@ -374,7 +375,7 @@ class Arbiter(object):
         util._setproctitle("arbiter [%s]" % self.name)
         
         # kill old workers
-        for wpid, (child, state) in OLD__WORKERS.items():
+        for wpid, (child, state) in list(OLD__WORKERS.items()):
             if state and child.timeout is not None:
                 if child.child_type == "supervisor":
                     # we only reload suprvisors.
@@ -390,7 +391,7 @@ class Arbiter(object):
         """\
         Kill unused/idle workers
         """
-        for (pid, child_info) in self._WORKERS.items():
+        for (pid, child_info) in list(self._WORKERS.items()):
             (child, state) = child_info
             if state and child.timeout is not None:
                 try:
@@ -440,7 +441,7 @@ class Arbiter(object):
         as required.
         """
 
-        for pid, (child, state) in self._WORKERS.items():
+        for pid, (child, state) in list(self._WORKERS.items()):
             if not state:
                 del self._WORKERS[pid]
                 self.spawn_child(self._SPECS_BYNAME[child.name])
@@ -519,7 +520,7 @@ class Arbiter(object):
         Lill all workers with the signal `sig`
         :attr sig: `signal.SIG*` value
         """
-        for pid in self._WORKERS.keys():
+        for pid in list(self._WORKERS.keys()):
             self.kill_worker(pid, sig)
                    
 

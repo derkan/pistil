@@ -24,10 +24,7 @@ DEFAULT_CONF = dict(
 class PoolArbiter(Arbiter):
 
 
-    _SIGNALS = map(
-        lambda x: getattr(signal, "SIG%s" % x),
-        "HUP QUIT INT TERM TTIN TTOU USR1 USR2 WINCH".split()
-    )
+    _SIGNALS = [getattr(signal, "SIG%s" % x) for x in "HUP QUIT INT TERM TTIN TTOU USR1 USR2 WINCH".split()]
 
     def __init__(self, args, spec=(), name=None,
             child_type="supervisor", age=0, ppid=0,
@@ -147,10 +144,10 @@ class PoolArbiter(Arbiter):
         Maintain the number of workers by spawning or killing
         as required.
         """
-        if len(self._WORKERS.keys()) < self.num_workers:
+        if len(list(self._WORKERS.keys())) < self.num_workers:
             self.spawn_workers()
 
-        workers = self._WORKERS.items()
+        workers = list(self._WORKERS.items())
         workers.sort(key=lambda w: w[1][0].age)
         while len(workers) > self.num_workers:
             (pid, _) = workers.pop(0)
@@ -163,7 +160,7 @@ class PoolArbiter(Arbiter):
         This is where a worker process leaves the main loop
         of the master process.
         """
-        for i in range(self.num_workers - len(self._WORKERS.keys())):
+        for i in range(self.num_workers - len(list(self._WORKERS.keys()))):
             self.spawn_child(self._SPEC)
             
     

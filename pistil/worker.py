@@ -3,7 +3,7 @@
 # This file is part of pistil released under the MIT license. 
 # See the NOTICE for more information.
 
-from __future__ import with_statement
+
 
 import logging
 import os
@@ -20,10 +20,7 @@ log = logging.getLogger(__name__)
 
 class Worker(object):
     
-    _SIGNALS = map(
-        lambda x: getattr(signal, "SIG%s" % x),
-        "HUP QUIT INT TERM USR1 USR2 WINCH CHLD".split()
-    )
+    _SIGNALS = [getattr(signal, "SIG%s" % x) for x in "HUP QUIT INT TERM USR1 USR2 WINCH CHLD".split()]
     
     _PIPE = []
 
@@ -100,8 +97,8 @@ class Worker(object):
 
         # For waking ourselves up
         self._PIPE = os.pipe()
-        map(util.set_non_blocking, self._PIPE)
-        map(util.close_on_exec, self._PIPE)
+        list(map(util.set_non_blocking, self._PIPE))
+        list(map(util.close_on_exec, self._PIPE))
         
         # Prevent fd inherientence
         util.close_on_exec(self.tmp.fileno())
@@ -114,7 +111,7 @@ class Worker(object):
         self.run()
 
     def init_signals(self):
-        map(lambda s: signal.signal(s, signal.SIG_DFL), self._SIGNALS)
+        list(map(lambda s: signal.signal(s, signal.SIG_DFL), self._SIGNALS))
         signal.signal(signal.SIGQUIT, self.handle_quit)
         signal.signal(signal.SIGTERM, self.handle_exit)
         signal.signal(signal.SIGINT, self.handle_exit)

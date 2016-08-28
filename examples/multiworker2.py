@@ -4,7 +4,7 @@
 # See the NOTICE for more information.
 
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 from pistil.arbiter import Arbiter
 from pistil.worker import Worker
@@ -31,11 +31,11 @@ class MyTcpWorker(TcpSyncWorker):
 class UrlWorker(Worker):
 
     def run(self):
-        print "ici"
+        print("ici")
         while self.alive: 
             time.sleep(0.1)
-            f = urllib2.urlopen("http://localhost:5000")
-            print f.read()
+            f = urllib.request.urlopen("http://localhost:5000")
+            print(f.read())
             self.notify() 
 
 class MyPoolArbiter(TcpArbiter):

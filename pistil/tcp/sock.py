@@ -111,7 +111,7 @@ def create_socket(conf):
             sock_type = TCP6Socket
         else:
             sock_type = TCPSocket
-    elif isinstance(addr, basestring):
+    elif isinstance(addr, str):
         sock_type = UnixSocket
     else:
         raise TypeError("Unable to create socket from: %r" % addr)

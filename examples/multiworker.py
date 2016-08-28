@@ -10,12 +10,12 @@ from pistil.worker import Worker
 class MyWorker(Worker):
 
     def handle(self): 
-        print "hello worker 1 from %s" % self.name
+        print("hello worker 1 from %s" % self.name)
 
 class MyWorker2(Worker):
 
     def handle(self):
-        print "hello worker 2 from %s" % self.name
+        print("hello worker 2 from %s" % self.name)
 
 
 if __name__ == '__main__':

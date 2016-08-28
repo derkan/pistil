@@ -23,6 +23,7 @@ import socket
 import sys
 import textwrap
 import time
+import collections
 
 
 MAXFD = 1024
@@ -241,7 +242,7 @@ def import_app(module):
     app = eval(obj, mod.__dict__)
     if app is None:
         raise ImportError("Failed to find application object: %r" % obj)
-    if not callable(app):
+    if not isinstance(app, collections.Callable):
         raise TypeError("Application object must be callable.")
     return app
 
@@ -258,9 +259,9 @@ def http_date(timestamp=None):
     
 def to_bytestring(s):
     """ convert to bytestring an unicode """
-    if not isinstance(s, basestring):
+    if not isinstance(s, str):
         return s
-    if isinstance(s, unicode):
+    if isinstance(s, str):
         return s.encode('utf-8')
     else:
         return s
