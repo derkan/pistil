@@ -46,7 +46,11 @@ class TcpSyncWorker(Worker):
                 continue
 
             except socket.error as e:
-                if e[0] not in (errno.EAGAIN, errno.ECONNABORTED):
+                if hasattr(e, 'errno'):
+                    v_err = e.errno
+                else:
+                    v_err = e[0]
+                if v_err not in (errno.EAGAIN, errno.ECONNABORTED):
                     raise
 
             # If our parent changed then we shut down.
