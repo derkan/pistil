@@ -312,10 +312,18 @@ class Arbiter(object):
             while os.read(self._PIPE[0], 1):
                 pass
         except select.error as e:
-            if e[0] not in [errno.EAGAIN, errno.EINTR]:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]
+            if v_err not in [errno.EAGAIN, errno.EINTR]:
                 raise
         except OSError as e:
-            if e.errno not in [errno.EAGAIN, errno.EINTR]:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]
+            if v_err not in [errno.EAGAIN, errno.EINTR]:
                 raise
         except KeyboardInterrupt:
             sys.exit()
@@ -431,7 +439,11 @@ class Arbiter(object):
                 if child.child_type in RESTART_WORKERS and not self.stopping:
                     self._WORKERS["<killed %s>"  % id(child)] = (child, 0)
         except OSError as e:
-            if e.errno == errno.ECHILD:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]
+            if v_err == errno.ECHILD:
                 pass
     
     def manage_workers(self):
