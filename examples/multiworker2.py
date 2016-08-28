@@ -25,7 +25,7 @@ class MyTcpWorker(TcpSyncWorker):
                         "Content-Type: text/html\r\n",
                         "Content-Length:" + str(len(data)) + "\r\n",
                          "Connection: close\r\n\r\n",
-                         data]))
+                         data]).encode())
 
 
 class UrlWorker(Worker):
