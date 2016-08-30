@@ -121,7 +121,11 @@ def create_socket(conf):
         try:
             return sock_type(conf, fd=fd)
         except socket.error as e:
-            if e[0] == errno.ENOTCONN:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]            
+            if v_err == errno.ENOTCONN:
                 log.error("PISTIL_FD should refer to an open socket.")
             else:
                 raise
@@ -134,9 +138,13 @@ def create_socket(conf):
         try:
             return sock_type(conf)
         except socket.error as e:
-            if e[0] == errno.EADDRINUSE:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]            
+            if v_err == errno.EADDRINUSE:
                 log.error("Connection in use: %s", str(addr))
-            if e[0] == errno.EADDRNOTAVAIL:
+            if v_err == errno.EADDRNOTAVAIL:
                 log.error("Invalid address: %s", str(addr))
                 sys.exit(1)
             if i < 5:
