@@ -548,7 +548,11 @@ class Arbiter(object):
         try:
             os.kill(pid, sig)
         except OSError as e:
-            if e.errno == errno.ESRCH:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]            
+            if v_err == errno.ESRCH:
                 try:
                     (child, info) = self._WORKERS.pop(pid)
                     child.tmp.close()
