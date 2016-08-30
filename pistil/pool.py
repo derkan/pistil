@@ -137,9 +137,13 @@ class PoolArbiter(Arbiter):
                     continue
 
                 child, state = child_info
-                child.tmp.close()
+                child.tmp.close()3
         except OSError as e:
-            if e.errno == errno.ECHILD:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]             
+            if v_err == errno.ECHILD:
                 pass
 
     def manage_workers(self):
@@ -180,6 +184,10 @@ class PoolArbiter(Arbiter):
         try:
             os.kill(pid, sig)
         except OSError as e:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]            
             if e.errno == errno.ESRCH:
                 try:
                     (child, info) = self._WORKERS.pop(pid)
