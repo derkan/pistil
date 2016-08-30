@@ -77,11 +77,19 @@ class Pidfile(object):
                     os.kill(wpid, 0)
                     return wpid
                 except OSError as e:
-                    if e[0] == errno.ESRCH:
+                    if hasattr(e, 'errno'):
+                        v_err = e.errno
+                    else:
+                        v_err = e[0]                    
+                    if v_err == errno.ESRCH:
                         return
                     raise
         except IOError as e:
-            if e[0] == errno.ENOENT:
+            if hasattr(e, 'errno'):
+                v_err = e.errno
+            else:
+                v_err = e[0]            
+            if v_err == errno.ENOENT:
                 return
             raise
 
