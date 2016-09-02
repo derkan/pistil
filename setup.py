@@ -19,8 +19,8 @@ setup(
         os.path.join(
             os.path.dirname(__file__),
             'README.rst'
-        )
-    ).read(),
+        ),
+    encoding='utf8').read(),
     author = 'Benoit Chesneau',
     author_email = 'benoitc@e-engura.com',
     license = 'MIT',
